@@ -67,43 +67,69 @@ bool isOperator(char c){
     }
 }
 
-double splitAndCalculate(string str, int &index){
+double splitAndCalculate(string str, int &offset){
+    int index = 0;
     vector<Cell> cells;
     int index_start = 0;
     int index_end = 0;
-    while(index < str.size() && str[index] != ')'){
+    while(index < str.size()){
         if(str[index] == '('){ // Если встретилась открывающаяся скобка
+            int off = 0;
+            cout << "(" << endl;
             index++;
-            double value = splitAndCalculate(str.substr(index), index);
-            char action;
+            double value = splitAndCalculate(str.substr(index), off);
+            index += off;
             if(index < str.size()){
-                action = str[++index];
+                Cell temp = {value, str[index]};
+                cout << "Created cell: Cell{" << temp.value << ", " << "\'" << temp.action << "\'}" << endl;
+                cells.push_back(temp);
+                index++;
             } else {
-                action = ')';
+                Cell temp = {value, ')'};
+                cout << "Created cell: Cell{" << temp.value << ", " << "\'" << temp.action << "\'}" << endl;
+                cells.push_back(temp);
+                break;
             }
-            Cell cur = {value, action};
-            cells.push_back(cur);    
+            index_start = index;
+            index_end = index;
         } else if(isOperator(str[index])){ // если встретился оператор
-            // Отрезать число, создать ячейку Юрцу в худи не жарко
+            double value = atof(str.substr(index_start, index_end-index_start+1).c_str());
+            char action = str[index];
+            index++;
+            index_start = index;
+            index_end = index;
+            Cell temp = {value, action};
+            cout << "Created cell: Cell{" << value << ", " << "\'" << action << "\'}" << endl;
+            cells.push_back(temp);
+        } else if(str[index] == ')') { // Если встретилась закрывающаяся скобка
+            double value = atof(str.substr(index_start, index_end-index_start).c_str());
+            char action = ')';
+            Cell temp = {value, action};
+            cout << "Created cell: Cell{" << value << ", " << "\'" << action << "\'}" << endl;
+            cells.push_back(temp);
+            offset = index+1;
+            break;
         } else { // Если встретилась цифра
             index_end++;
             index++;
+            if(index == str.size()){
+                double value = atof(str.substr(index_start, index_end-index_start+1).c_str());
+                Cell temp = {value, ')'};
+                cout << "Created cell: Cell{" << temp.value << ", " << "\'" << temp.action << "\'}" << endl;
+                cells.push_back(temp);
+            }
         }
     }
-    return merge(cells[0], 1, cells);
+    double result = merge(cells[0], 1, cells);
+    return result;
 }
 
+
+
 int main(){
-    vector<Cell> listCells;
-    string strSource = "5+(10-2021)*3";
-    Cell left = {11, '-'};
-    Cell right = {10, '*'};
-    Cell left1 = {5, ')'};
-    listCells.push_back(left);
-    listCells.push_back(right);
-    listCells.push_back(left1);
-    int index_start = 3;
-    int index_end = 4;
-    cout << atof(strSource.substr(index_start, index_end-index_start+1).c_str()) + 5 << endl;
+    string strSource = "3+5*(1+3)";
+    int trash = 0;
+    double result = splitAndCalculate(strSource, trash);
+    cout << "Finish result: " << result << endl;
     return 0;
 }
