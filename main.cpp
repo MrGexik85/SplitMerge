@@ -84,7 +84,7 @@ double splitAndCalculate(string str, int &index){
             Cell cur = {value, action};
             cells.push_back(cur);    
         } else if(isOperator(str[index])){ // если встретился оператор
-            // Отрезать число, создать ячейку
+            // Отрезать число, создать ячейку Юрцу в худи не жарко
         } else { // Если встретилась цифра
             index_end++;
             index++;
@@ -102,8 +102,8 @@ int main(){
     listCells.push_back(left);
     listCells.push_back(right);
     listCells.push_back(left1);
-    int index_start = 5;
-    int index_end = 8;
+    int index_start = 3;
+    int index_end = 4;
     cout << atof(strSource.substr(index_start, index_end-index_start+1).c_str()) + 5 << endl;
     return 0;
 }
