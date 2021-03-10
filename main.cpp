@@ -75,7 +75,7 @@ double splitAndCalculate(string str, int &offset){
     while(index < str.size()){
         if(str[index] == '('){ // Если встретилась открывающаяся скобка
             int off = 0;
-            cout << "(" << endl;
+            cout << "Enter \'(\'" << endl;
             index++;
             double value = splitAndCalculate(str.substr(index), off);
             index += off;
@@ -108,6 +108,7 @@ double splitAndCalculate(string str, int &offset){
             cout << "Created cell: Cell{" << value << ", " << "\'" << action << "\'}" << endl;
             cells.push_back(temp);
             offset = index+1;
+            cout << "Exit \')\'" << endl;
             break;
         } else { // Если встретилась цифра
             index_end++;
@@ -127,7 +128,8 @@ double splitAndCalculate(string str, int &offset){
 
 
 int main(){
-    string strSource = "3+5*(1+3)";
+    string strSource;
+    cin >> strSource;
     int trash = 0;
     double result = splitAndCalculate(strSource, trash);
     cout << "Finish result: " << result << endl;
