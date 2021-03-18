@@ -55,6 +55,14 @@ double merge(Cell &current, int index, vector<Cell> &vector, bool MergeOneOnly =
     return current.value;
 }
 
+bool isDigit(char c){
+    return c >= '0' && c <= '9';
+}
+
+bool isLetter(char c){
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+
 bool isOperator(char c){
     switch (c)
     {
@@ -67,58 +75,34 @@ bool isOperator(char c){
     }
 }
 
-double splitAndCalculate(string str, int &offset){
-    int index = 0;
+double splitAndCalculate(string str, int &index){
     vector<Cell> cells;
-    int index_start = 0;
-    int index_end = 0;
     while(index < str.size()){
-        if(str[index] == '('){ // Если встретилась открывающаяся скобка
-            int off = 0;
+        if(isDigit(str[index])){
+            // Если встретилась цифра - считываем полностью число и следующий за ним знак операции
+            int value = 0;
+            do {
+                int cur = str[index++] - '0';
+                value = value*10 + cur;
+            } while(isDigit(str[index]));
+            char op = (index < str.size()) ? str[index++] : ')';
+            Cell temp = {value, op};
+            cells.push_back(temp);
+            cout << "Created Cell: (" << value << "; \'" << op << "\')" << endl;
+        } else if(str[index] == '('){
+            // Если встретилась открывающая скобка - вызвать функцию рекурсивно и выполнить сдвиг по строке
             cout << "Enter \'(\'" << endl;
             index++;
-            double value = splitAndCalculate(str.substr(index), off);
-            index += off;
-            if(index < str.size()){
-                Cell temp = {value, str[index]};
-                cout << "Created cell: Cell{" << temp.value << ", " << "\'" << temp.action << "\'}" << endl;
-                cells.push_back(temp);
-                index++;
-            } else {
-                Cell temp = {value, ')'};
-                cout << "Created cell: Cell{" << temp.value << ", " << "\'" << temp.action << "\'}" << endl;
-                cells.push_back(temp);
-                break;
-            }
-            index_start = index;
-            index_end = index;
-        } else if(isOperator(str[index])){ // если встретился оператор
-            double value = atof(str.substr(index_start, index_end-index_start+1).c_str());
-            char action = str[index];
-            index++;
-            index_start = index;
-            index_end = index;
-            Cell temp = {value, action};
-            cout << "Created cell: Cell{" << value << ", " << "\'" << action << "\'}" << endl;
+            double value = splitAndCalculate(str, index);
+            char op = (index < str.size()) ? str[index++] : ')';
+            Cell temp = {value, op};
             cells.push_back(temp);
-        } else if(str[index] == ')') { // Если встретилась закрывающаяся скобка
-            double value = atof(str.substr(index_start, index_end-index_start).c_str());
-            char action = ')';
-            Cell temp = {value, action};
-            cout << "Created cell: Cell{" << value << ", " << "\'" << action << "\'}" << endl;
-            cells.push_back(temp);
-            offset = index+1;
+            cout << "Created Cell: (" << value << "; \'" << op << "\')" << endl;
+        } else if(str[index] == ')'){
+            // Если встретилась закрывающая скобка - выход из рекурсии
             cout << "Exit \')\'" << endl;
-            break;
-        } else { // Если встретилась цифра
-            index_end++;
             index++;
-            if(index == str.size()){
-                double value = atof(str.substr(index_start, index_end-index_start+1).c_str());
-                Cell temp = {value, ')'};
-                cout << "Created cell: Cell{" << temp.value << ", " << "\'" << temp.action << "\'}" << endl;
-                cells.push_back(temp);
-            }
+            break;
         }
     }
     double result = merge(cells[0], 1, cells);
