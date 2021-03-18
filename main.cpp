@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -86,7 +87,7 @@ double splitAndCalculate(string str, int &index){
     while(index < str.size()){
         if(isDigit(str[index])){
             // Если встретилась цифра - считываем полностью число и следующий за ним знак операции
-            int value = 0;
+            double value = 0;
             do {
                 int cur = str[index++] - '0';
                 value = value*10 + cur;
@@ -116,11 +117,16 @@ double splitAndCalculate(string str, int &index){
     return result;
 }
 
-
+string getStringFromFile(string filename = "source.txt"){
+    ifstream in(filename);
+    string str;
+    in >> str;
+    return str;
+}
 
 int main(){
-    string strSource;
-    cin >> strSource;
+    string strSource = getStringFromFile("source.txt");
+    cout << "Source string: " << strSource << endl;
     int trash = 0;
     double result = splitAndCalculate(strSource, trash);
     cout << "Finish result: " << result << endl;
