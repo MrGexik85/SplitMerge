@@ -3,11 +3,13 @@
 
 using namespace std;
 
+// Структура для ячеек - хранит значение и опрецию с этим значением
 struct Cell {
     double value;
     char action;
 };
 
+// Возвращает приоритет каждой операции
 int getPriority(char action){
     switch(action){
         case '*':
@@ -18,6 +20,7 @@ int getPriority(char action){
     return 0;
 }
 
+// могут ли две ячейки, переданные в кач-ве параметров быть слиты в одну
 bool canMergeCells(Cell leftCell, Cell rightCell){
     return getPriority(leftCell.action) >= getPriority(rightCell.action);
 }
@@ -41,6 +44,7 @@ void mergeCells(Cell &leftCell, Cell &rightCell){
     leftCell.action = rightCell.action;
 }
 
+// Объединение ячеек из списка ячеек
 double merge(Cell &current, int index, vector<Cell> &vector, bool MergeOneOnly = false){
     while(index < vector.size()){
         Cell next = vector[index++];
@@ -55,6 +59,7 @@ double merge(Cell &current, int index, vector<Cell> &vector, bool MergeOneOnly =
     return current.value;
 }
 
+// Далее идут 3 вспомогательные булевые функции определяющие является символ числом, буквой или оператором
 bool isDigit(char c){
     return c >= '0' && c <= '9';
 }
@@ -75,6 +80,7 @@ bool isOperator(char c){
     }
 }
 
+// Функци разбивает строку на ячейки и считает значение (применяется рекурсия)
 double splitAndCalculate(string str, int &index){
     vector<Cell> cells;
     while(index < str.size()){
@@ -85,7 +91,8 @@ double splitAndCalculate(string str, int &index){
                 int cur = str[index++] - '0';
                 value = value*10 + cur;
             } while(isDigit(str[index]));
-            char op = (index < str.size()) ? str[index++] : ')';
+            char op = (index < str.size()) ? str[index] : ')';
+            str[index] == ')' ? 0 : index++;
             Cell temp = {value, op};
             cells.push_back(temp);
             cout << "Created Cell: (" << value << "; \'" << op << "\')" << endl;
