@@ -102,7 +102,8 @@ double splitAndCalculate(string str, int &index){
             cout << "Enter \'(\'" << endl;
             index++;
             double value = splitAndCalculate(str, index);
-            char op = (index < str.size()) ? str[index++] : ')';
+            char op = (index < str.size()) ? str[index] : ')';
+            str[index] == ')' ? 0 : index++;
             Cell temp = {value, op};
             cells.push_back(temp);
             cout << "Created Cell: (" << value << "; \'" << op << "\')" << endl;
